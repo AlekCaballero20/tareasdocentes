@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas académicas - Musicala</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #F4F4F4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1A237E;
+            font-weight: 700;
+            font-size: 32px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        h1 span {
+            display: inline-block;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #CCC;
+            transition: all 0.3s ease-in-out;
+        }
+
+        th {
+            background-color: #3949AB;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #F9F9F9;
+        }
+
+        tr:hover {
+            background-color: #DCE775;
+            cursor: pointer;
+            transform: scale(1.02);
+        }
+
+        /* Animación de puntos flotantes */
+        .floating-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(57, 73, 171, 0.4);
+            border-radius: 50%;
+            animation: float 6s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0.5; }
+            100% { transform: translateY(-30px) translateX(30px); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-dots"></div>
+
+    <div class="container">
+        <h1>
+            <span>T</span><span>a</span><span>r</span><span>e</span>  
+            <span>a</span><span>s</span>  
+            <span>D</span><span>o</span><span>c</span><span>e</span><span>n</span><span>t</span><span>e</span><span>s</span>  
+        </h1>
+
+        <table>
+            <thead>
+                <tr id="table-header"></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Cargar datos desde Google Sheets en formato CSV
+        const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSnSbCf7varXDG1FyeJlPqmj-l6FY1tyDzJnd28yj0t1hctAyAOldgNjHfGfKz23ZGZkMQBsnWAYozm/pub?gid=1949956737&single=true&output=csv";
+
+        async function cargarDatos() {
+            const response = await fetch(url);
+            const data = await response.text();
+            const filas = data.split("\n").map(row => row.split(","));
+
+            // Generar encabezados
+            const headerRow = document.getElementById("table-header");
+            headerRow.innerHTML = "";
+            filas[0].forEach(header => {
+                const th = document.createElement("th");
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+
+            // Generar filas de datos
+            const tbody = document.getElementById("table-body");
+            tbody.innerHTML = "";
+            filas.slice(1).forEach(fila => {
+                const tr = document.createElement("tr");
+                fila.forEach(celda => {
+                    const td = document.createElement("td");
+                    td.textContent = celda;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        cargarDatos();
+
+        // Generar puntos flotantes
+        function crearPuntosFlotantes() {
+            const numPuntos = 20;
+            const contenedor = document.querySelector(".floating-dots");
+
+            for (let i = 0; i < numPuntos; i++) {
+                const dot = document.createElement("div");
+                dot.classList.add("dot");
+
+                // Posiciones aleatorias
+                const size = Math.random() * 12 + 8;
+                dot.style.width = size + "px";
+                dot.style.height = size + "px";
+                dot.style.top = Math.random() * 100 + "vh";
+                dot.style.left = Math.random() * 100 + "vw";
+
+                // Duración aleatoria
+                dot.style.animationDuration = Math.random() * 5 + 3 + "s";
+                contenedor.appendChild(dot);
+            }
+        }
+
+        crearPuntosFlotantes();
+
+        // Animar letras en el título
+        const letras = document.querySelectorAll("h1 span");
+        letras.forEach((letra, index) => {
+            letra.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
